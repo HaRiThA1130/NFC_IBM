@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Login - NFC X CV Attendance System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-blue-600 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index" class="font-bold text-xl">NFC x CV Attendance System</a>
+                </div>
+                <div>
+                    <a href="index" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">Home</a>
+                    <a href="aboutus" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">About
+                        Us</a>
+                    <a href="faculty-login" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-700">Faculty
+                        Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto mt-12 bg-white rounded-lg shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
+        <div class="p-8 bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex flex-col justify-center">
+            <h2 class="text-3xl font-bold mb-4">Welcome back, Faculty</h2>
+            <p class="opacity-90">Sign in to access the NFC x CV Attendance dashboard. Fast, secure, and simple.</p>
+            <div class="mt-8">
+                <img src="faculty_login_illustration.png" alt="Faculty Login Illustration"
+                    class="w-full h-auto opacity-90 rounded-lg">
+            </div>
+        </div>
+        <div class="p-8">
+            <h3 class="text-2xl font-semibold mb-4">Faculty Login</h3>
+            <p id="errorMsg" class="hidden text-sm text-red-600 mb-4"></p>
+            <form id="loginForm" novalidate>
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                    <div class="relative">
+                        <input type="email" id="email" name="email"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 pr-10 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required>
+                        <span class="absolute right-3 top-2 text-gray-400"><i class="fas fa-envelope"></i></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 pr-10 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            required>
+                        <button type="button" id="togglePwd"
+                            class="absolute right-2 top-2 text-gray-500 hover:text-gray-700"><i
+                                class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mb-4">
+                    <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+                </div>
+                <div class="mb-4">
+                    <button id="signInBtn" type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition">Sign
+                        In</button>
+                </div>
+            </form>
+            <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <button id="googleSignIn"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    <img class="h-5 w-5" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                        alt="Google logo">
+                    <span>Sign in with Google</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">About Us</h3>
+                    <p class="text-gray-400">NFC x CV Attendance System provides efficient and reliable attendance
+                        tracking for educational institutions.</p>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <p class="text-gray-400"><i class="fas fa-envelope mr-2"></i>info@nfcattendance.com</p>
+                    <p class="text-gray-400"><i class="fas fa-phone mr-2"></i>+1 (123) 456-7890</p>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2024 NFC x CV Attendance System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDz8GmEYaZPymSTowedSKUsj_naF7JTfXw",
+            authDomain: "kare-attendance-system-9fe72.firebaseapp.com",
+            projectId: "kare-attendance-system-9fe72",
+            storageBucket: "kare-attendance-system-9fe72.appspot.com",
+            messagingSenderId: "148380211452",
+            appId: "1:148380211452:web:72ba700a4ca285f74b1f79",
+            measurementId: "G-26LT6RJ37X"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const redirectTo = 'faculty-dashboard-fixed.html';
+
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const signInBtn = document.getElementById('signInBtn');
+        const googleBtn = document.getElementById('googleSignIn');
+        const errorMsg = document.getElementById('errorMsg');
+        const togglePwd = document.getElementById('togglePwd');
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.classList.remove('hidden');
+        }
+
+        function clearError() {
+            errorMsg.textContent = '';
+            errorMsg.classList.add('hidden');
+        }
+
+        function setLoading(btn, loading, text) {
+            if (loading) {
+                if (!btn.dataset.orig) btn.dataset.orig = btn.innerHTML;
+                btn.innerHTML = text;
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            } else {
+                if (btn.dataset.orig) btn.innerHTML = btn.dataset.orig;
+                btn.disabled = false;
+                btn.classList.remove('opacity-60', 'cursor-not-allowed');
+            }
+        }
+
+        togglePwd.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePwd.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                passwordInput.type = 'password';
+                togglePwd.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            clearError();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            if (!email || !password) {
+                showError('Please enter both email and password.');
+                return;
+            }
+            setLoading(signInBtn, true, 'Signing in...');
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log('User signed in:', user);
+                    window.location.href = redirectTo;
+                })
+                .catch((error) => {
+                    console.error('Error signing in:', error);
+                    showError(error.message || 'Failed to sign in.');
+                })
+                .finally(() => setLoading(signInBtn, false));
+        });
+
+        googleBtn.addEventListener('click', () => {
+            clearError();
+            setLoading(googleBtn, true, 'Signing with Google...');
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential?.accessToken;
+                    const user = result.user;
+                    console.log('User signed in with Google:', user);
+                    window.location.href = redirectTo;
+                }).catch((error) => {
+                    console.error('Error signing in with Google:', error);
+                    showError(error.message || 'Google sign-in failed.');
+                }).finally(() => setLoading(googleBtn, false));
+        });
+    </script>
+</body>
+
+</html>

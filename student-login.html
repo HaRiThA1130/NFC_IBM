@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Student Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="d-flex align-items-center justify-content-center" style="height:100vh;">
+    <div class="card p-4" style="max-width:420px; width:100%;">
+        <h3 class="mb-3">Student Login</h3>
+        <div id="alert" class="alert alert-danger d-none"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input id="email" class="form-control" type="email" placeholder="student@college.edu" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input id="password" class="form-control" type="password" placeholder="Password" />
+        </div>
+        <button id="loginBtn" class="btn btn-primary w-100">Sign In</button>
+        <div class="mt-3 text-center">
+            <a href="index.html">Back to Home</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDz8GmEYaZPymSTowedSKUsj_naF7JTfXw",
+            authDomain: "kare-attendance-system-9fe72.firebaseapp.com",
+            projectId: "kare-attendance-system-9fe72",
+            storageBucket: "kare-attendance-system-9fe72.appspot.com",
+            messagingSenderId: "148380211452",
+            appId: "1:148380211452:web:72ba700a4ca285f74b1f79",
+            measurementId: "G-26LT6RJ37X"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const loginBtn = document.getElementById('loginBtn');
+        const alertBox = document.getElementById('alert');
+
+        function showError(msg) {
+            alertBox.textContent = msg;
+            alertBox.classList.remove('d-none');
+        }
+
+        loginBtn.addEventListener('click', async () => {
+            alertBox.classList.add('d-none');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                showError('Please fill email and password.');
+                return;
+            }
+
+            try {
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                // Redirect on success (students currently redirected to index/home)
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error(err);
+                showError(err.message || 'Login failed.');
+            }
+        });
+    </script>
+</body>
+
+</html>
